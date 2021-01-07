@@ -24,6 +24,12 @@ const App = () => {
 
     return (
         <div>
+            <h1>
+                Traveller{" "}
+                <span role="img" aria-label="tent">
+                    🏝️
+                </span>
+            </h1>
             <GoogleMap
                 id="map"
                 mapContainerStyle={mapContainerStyle}
