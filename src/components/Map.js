@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
     GoogleMap,
     useLoadScript,
@@ -11,6 +11,7 @@ import { getUserLocation } from "./../scripts/localActions";
 import { mapContainerStyle } from "./../styles/mapStyles";
 import Constants from "./../scripts/constants";
 import luggageSVG from "./../assets/luggage.svg";
+import compassSVG from "./../assets/compass.svg";
 
 const Map = () => {
     const { isLoaded, loadError } = useLoadScript({
@@ -39,11 +40,22 @@ const Map = () => {
         ]);
     }, []);
 
+    const mapRef = useRef();
+    const onMapLoad = useCallback((map) => {
+        mapRef.current = map;
+    }, []);
+
+    const panTo = useCallback(({ lat, lng }) => {
+        mapRef.current.panTo({ lat, lng });
+        mapRef.current.setZoom(14);
+    }, []);
+
     if (loadError) return "Error loading google maps";
     if (!isLoaded) return "Loading...";
 
     return (
         <div>
+            <Locate panTo={panTo} currLocation={currLocation} />
             <GoogleMap
                 id="map"
                 mapContainerStyle={mapContainerStyle}
@@ -51,7 +63,7 @@ const Map = () => {
                 center={currLocation}
                 options={Constants.googleMapsOptions}
                 onClick={onMapClick}
-                // onLoad={onMapLoad}
+                onLoad={onMapLoad}
             >
                 {markers.map((marker) => (
                     <Marker
@@ -92,6 +104,14 @@ const Map = () => {
                 ) : null}
             </GoogleMap>
         </div>
+    );
+};
+
+const Locate = ({ panTo, currLocation }) => {
+    return (
+        <button className="locate" onClick={() => panTo(currLocation)}>
+            <img src={compassSVG} alt="compass" />
+        </button>
     );
 };
 
