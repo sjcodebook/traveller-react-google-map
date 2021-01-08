@@ -28,7 +28,10 @@ import compassSVG from "./../assets/compass.svg";
 
 const Map = () => {
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: process.env.REACT_APP_GOOGLE_PLACES_API_KEY,
+        googleMapsApiKey:
+            process.env.NODE_ENV === "production"
+                ? process.env.REACT_APP_GOOGLE_PLACES_API_KEY_PROD
+                : process.env.REACT_APP_GOOGLE_PLACES_API_KEY_DEV,
         libraries: Constants.googleLibs,
     });
     const [markers, setMarkers] = useState([]);
