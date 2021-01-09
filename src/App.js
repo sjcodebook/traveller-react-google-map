@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import Login from "./components/Login";
 import Map from "./components/Map";
 
 import userStore from "./stores/UserStore";
-import { setAuthStateChangeListener, logout } from "./scripts/remoteActions";
+import { setAuthStateChangeListener } from "./scripts/remoteActions";
 
 const App = observer(() => {
     useEffect(() => {
@@ -20,15 +20,7 @@ const App = observer(() => {
                     🏝️
                 </span>
             </h1>
-            {userStore.isLoggedIn ? (
-                <div>
-                    <button onClick={() => logout()}> Logout</button>
-                    {userStore.currentUser.email}
-                    <Map />
-                </div>
-            ) : (
-                <Login />
-            )}
+            {userStore.isLoggedIn ? <Map /> : <Login />}
         </div>
     );
 });

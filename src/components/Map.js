@@ -26,7 +26,9 @@ import Constants from "./../scripts/constants";
 import luggageSVG from "./../assets/luggage.svg";
 import compassSVG from "./../assets/compass.svg";
 
-// import userStore from "./../stores/UserStore";
+import userStore from "./../stores/UserStore";
+
+import UserDialog from "./UserDialog";
 
 const Map = () => {
     const { isLoaded, loadError } = useLoadScript({
@@ -50,10 +52,12 @@ const Map = () => {
         })();
     }, []);
 
-    const onMapClick = useCallback((e) => {
+    const onMapClick = useCallback(async (e) => {
+        const results = await getGeocode({ location: e.latLng });
         setMarkers((current) => [
             ...current,
             {
+                formatted_address: results[0].formatted_address,
                 lat: e.latLng.lat(),
                 lng: e.latLng.lng(),
                 time: new Date(),
@@ -77,6 +81,7 @@ const Map = () => {
     return (
         <div>
             <Locate panTo={panTo} currLocation={currLocation} />
+            <UserPic panTo={panTo} currLocation={currLocation} />
             <Search panTo={panTo} />
             <GoogleMap
                 id="map"
@@ -113,12 +118,12 @@ const Map = () => {
                         <div>
                             <h2>
                                 <span role="img" aria-label="bear">
-                                    🐻
+                                    🏖️
                                 </span>{" "}
-                                Alert
+                                {selected.formatted_address}
                             </h2>
                             <p>
-                                Spotted{" "}
+                                Marked{" "}
                                 {formatRelative(selected.time, new Date())}
                             </p>
                         </div>
@@ -134,6 +139,23 @@ const Locate = ({ panTo, currLocation }) => {
         <button className="locate" onClick={() => panTo(currLocation)}>
             <img src={compassSVG} alt="compass" />
         </button>
+    );
+};
+
+const UserPic = ({ panTo, currLocation }) => {
+    const [userDialog, setUserDialog] = useState(false);
+
+    return (
+        <div>
+            <button className="userPic" onClick={() => setUserDialog(true)}>
+                <img src={userStore.currentUser.photoUrl} alt="userPic" />
+            </button>
+            <UserDialog
+                userDialog={userDialog}
+                setUserDialog={setUserDialog}
+                userStore={userStore}
+            />
+        </div>
     );
 };
 
