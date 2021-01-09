@@ -26,6 +26,8 @@ import Constants from "./../scripts/constants";
 import luggageSVG from "./../assets/luggage.svg";
 import compassSVG from "./../assets/compass.svg";
 
+// import userStore from "./../stores/UserStore";
+
 const Map = () => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey:
@@ -36,7 +38,10 @@ const Map = () => {
     });
     const [markers, setMarkers] = useState([]);
     const [selected, setSelected] = useState(null);
-    const [currLocation, setCurrLocation] = useState({});
+    const [currLocation, setCurrLocation] = useState({
+        lat: 40.73061,
+        lng: -73.935242,
+    });
 
     useEffect(() => {
         (async () => {

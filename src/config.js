@@ -1,4 +1,5 @@
 import firebase from "firebase";
+import userStore from "./stores/UserStore";
 
 const Configs = {
     FirebaseConfig: {
@@ -11,9 +12,20 @@ const Configs = {
     },
     uiConfig: {
         signInFlow: "popup",
+        signInSuccessUrl: "/",
         signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
-        callback: {
-            signInSuccess: () => false,
+        callbacks: {
+            signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+                if (authResult.user) {
+                    const currentUser = authResult.user;
+                    userStore.setCurrentUser(
+                        currentUser.uid,
+                        currentUser.email,
+                        currentUser.displayName,
+                        currentUser.photoURL
+                    );
+                }
+            },
         },
     },
 };

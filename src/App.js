@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import Login from "./components/Login";
 import Map from "./components/Map";
 
-import { auth } from "./scripts/fire";
-// import Configs from "./config";
+import userStore from "./stores/UserStore";
+import { setAuthStateChangeListener, logout } from "./scripts/remoteActions";
 
-const App = () => {
-    const [isSignedIn, setIsSignedIn] = useState(false);
-    const [user, setUser] = useState(null);
-
+const App = observer(() => {
     useEffect(() => {
-        auth.onAuthStateChanged((user) => {
-            setIsSignedIn(!!user);
-            setUser(user);
-        });
-    }, []);
+        setAuthStateChangeListener();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userStore.currentUser]);
 
     return (
         <div>
@@ -24,9 +20,10 @@ const App = () => {
                     🏝️
                 </span>
             </h1>
-            {isSignedIn ? (
+            {userStore.isLoggedIn ? (
                 <div>
-                    <button onClick={() => auth.signOut()}> Logout</button>
+                    <button onClick={() => logout()}> Logout</button>
+                    {userStore.currentUser.email}
                     <Map />
                 </div>
             ) : (
@@ -34,6 +31,6 @@ const App = () => {
             )}
         </div>
     );
-};
+});
 
 export default App;
